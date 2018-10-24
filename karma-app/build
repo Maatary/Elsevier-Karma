@@ -49,7 +49,7 @@ mv karma-app-deps-master/*.tar.gz .
 rm -rf karma-app-deps-master master.zip
 
 # download tomcat binary
-wget http://mirror.ox.ac.uk/sites/rsync.apache.org/tomcat/tomcat-8/v8.5.32/bin/apache-tomcat-8.5.32.zip
+wget http://mirrors.ukfast.co.uk/sites/ftp.apache.org/tomcat/tomcat-8/v8.5.34/bin/apache-tomcat-8.5.34.zip
 unzip apache-tomcat-*.zip
 rm apache-tomcat-*.zip
 
