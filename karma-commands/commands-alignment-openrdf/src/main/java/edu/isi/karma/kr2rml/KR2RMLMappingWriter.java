@@ -89,7 +89,9 @@ public class KR2RMLMappingWriter {
 		else {
 			mappingRes = f.createBNode();
 		}
-		con.add(mappingRes, RDF.TYPE, repoURIs.get(Uris.KM_R2RML_MAPPING_URI));
+		con.add(mappingRes, RDF.TYPE, repoURIs.get(Uris.KM_R2RML_MAPPING_URI));                
+		con.add(mappingRes, RDF.TYPE, repoURIs.get(Uris.OWL_ONTOLOGY_URI));
+                
 		Value srcNameVal = f.createLiteral(worksheet.getTitle());
 		con.add(mappingRes, repoURIs.get(Uris.KM_SOURCE_NAME_URI), srcNameVal);
 		
