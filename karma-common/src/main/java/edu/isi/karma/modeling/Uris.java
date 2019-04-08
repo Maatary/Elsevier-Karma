@@ -39,6 +39,7 @@ public abstract class Uris {
 	public static final String RDF_VALUE_URI = Namespaces.RDF + "value";
 
 	public static final String OWL_SAMEAS_URI = Namespaces.OWL + "sameAs";
+        public static final String OWL_ONTOLOGY_URI = Namespaces.OWL + "Ontology";
 	// Karma Internal URIs
 	public static final String DEFAULT_LINK_URI = Namespaces.KARMA_DEV + "defaultLink"; 
 	public static final String DEFAULT_NODE_URI = Namespaces.KARMA_DEV + "defaultNode"; 

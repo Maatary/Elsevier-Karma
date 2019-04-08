@@ -1,10 +1,18 @@
 /* Load and parse initial JSON */
 // Get the preferences Id from cookies if present
 var bootupURL = "KarmaServlet?rand=" + (new Date()).valueOf();
+
 if ($.cookie("workspacePreferencesId") != null) {
 	bootupURL += "&hasPreferenceId=" + true + "&workspacePreferencesId=" + $.cookie("workspacePreferencesId");
 } else {
 	bootupURL += "&hasPreferenceId=" + false;
+}
+if ($.cookie("modelURI") != null) {
+	bootupURL += "&modelUri=" + $.cookie("modelURI");
+}
+
+if ($.cookie("ontologyType") != null) {
+	bootupURL += "&ontologyType=" + $.cookie("ontologyType");
 }
 
 $("div#WaitingDiv").show();
