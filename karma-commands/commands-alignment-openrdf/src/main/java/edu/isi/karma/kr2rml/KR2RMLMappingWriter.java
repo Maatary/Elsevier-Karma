@@ -60,6 +60,8 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
+import edu.isi.karma.webserver.ContextParametersRegistry;
+import edu.isi.karma.webserver.ServletContextParameterMap;
 
 public class KR2RMLMappingWriter {
 	
@@ -79,7 +81,7 @@ public class KR2RMLMappingWriter {
 		initializeURIs();
 	}
 
-	private Resource addKR2RMLMappingResource(Worksheet worksheet, KR2RMLMapping mapping, String optionalMappingUri)
+	private Resource addKR2RMLMappingResource(Worksheet worksheet, KR2RMLMapping mapping, String optionalMappingUri, String useOntologyType)
 			throws RepositoryException {
 		/** Create resource for the mapping as a blank node **/
 		Resource mappingRes;
@@ -89,8 +91,12 @@ public class KR2RMLMappingWriter {
 		else {
 			mappingRes = f.createBNode();
 		}
-		con.add(mappingRes, RDF.TYPE, repoURIs.get(Uris.KM_R2RML_MAPPING_URI));                
-		con.add(mappingRes, RDF.TYPE, repoURIs.get(Uris.OWL_ONTOLOGY_URI));
+                
+		con.add(mappingRes, RDF.TYPE, repoURIs.get(Uris.KM_R2RML_MAPPING_URI)); 
+                
+                if(useOntologyType!=null && "true".equals(useOntologyType)){
+                    con.add(mappingRes, RDF.TYPE, repoURIs.get(Uris.OWL_ONTOLOGY_URI));
+                }
                 
 		Value srcNameVal = f.createLiteral(worksheet.getTitle());
 		con.add(mappingRes, repoURIs.get(Uris.KM_SOURCE_NAME_URI), srcNameVal);
@@ -149,9 +155,20 @@ public class KR2RMLMappingWriter {
 	public boolean addR2RMLMapping(KR2RMLMapping mapping, Worksheet worksheet, Workspace workspace, String optionalMappingUri)
 			throws RepositoryException, JSONException {
 
-		try {
-
-			Resource mappingRes = addKR2RMLMappingResource(worksheet, mapping, optionalMappingUri);
+            
+		try {   
+                        String useOntologyType=ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId())
+                                    .getParameterValue(ServletContextParameterMap.ContextParameter.USE_ONTOLOGY_TYPE);
+                        String modelUri="";                        
+                        if(optionalMappingUri==null){
+                            modelUri=ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId())
+                                    .getParameterValue(ServletContextParameterMap.ContextParameter.MODEL_URI);                       
+                        } else{
+                            modelUri=optionalMappingUri;
+                        }
+			System.out.println("Model URI= "+modelUri);
+                        System.out.println("Use Ontology Type= " + useOntologyType);
+			Resource mappingRes = addKR2RMLMappingResource(worksheet, mapping, modelUri, useOntologyType);
 			addTripleMaps(mapping, mappingRes, worksheet, workspace);
 			addPrefixes(mapping);
 			

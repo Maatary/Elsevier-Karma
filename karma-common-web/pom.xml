@@ -97,6 +97,14 @@
 				<artifactId>jetty-maven-plugin</artifactId>
 				<version>${jettyVersion}</version>
 				<configuration>
+				<webApp>
+
+                    <!-- no need to scan anything as we're using servlet 2.5 and moreover, we're not using ServletContainerInitializer(s) -->
+                    <!-- for more relevant information regarding scanning of classes refer to https://java.net/jira/browse/SERVLET_SPEC-36 -->
+                    <webInfIncludeJarPattern>^$</webInfIncludeJarPattern>
+                    <containerIncludeJarPattern>^$</containerIncludeJarPattern>
+                    <!--<webInfIncludeJarPattern>.*/spring-[^/]*\.jar$|.*/.*jsp-api-[^/]\.jar$|./.*jsp-[^/]\.jar$|./.*taglibs[^/]*\.jar$</webInfIncludeJarPattern>-->
+                </webApp>
 					<connectors>
 						<!-- work around file locking on windows -->
 						<connector implementation="org.eclipse.jetty.server.bio.SocketConnector">
@@ -122,6 +130,14 @@
 		          <artifactId>jetty-maven-plugin</artifactId>
 		          <version>7.1.6.v20100715</version>
 		          <configuration>
+				  <webApp>
+
+                    <!-- no need to scan anything as we're using servlet 2.5 and moreover, we're not using ServletContainerInitializer(s) -->
+                    <!-- for more relevant information regarding scanning of classes refer to https://java.net/jira/browse/SERVLET_SPEC-36 -->
+                    <webInfIncludeJarPattern>^$</webInfIncludeJarPattern>
+                    <containerIncludeJarPattern>^$</containerIncludeJarPattern>
+                    <!--<webInfIncludeJarPattern>.*/spring-[^/]*\.jar$|.*/.*jsp-api-[^/]\.jar$|./.*jsp-[^/]\.jar$|./.*taglibs[^/]*\.jar$</webInfIncludeJarPattern>-->
+                </webApp>
 		            <webAppSourceDirectory>
 		              ${project.build.directory}/${project.build.finalName}
 		            </webAppSourceDirectory>
