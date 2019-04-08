@@ -27,6 +27,9 @@ var Settings = (function() {
 			});
 			$("#displayGithubSettings").on("click", function(e) {
 				GithubSettingsDialog.getInstance().show();
+			});                        
+                        $("#displayModelSettings").on("click", function(e) {
+				ModelSettingsDialog.getInstance().show();
 			});
 			$("#r2rmlExportSuperclass").on("click", function(e) {
         		r2rml_export_superclass = !$("#r2rmlExportSuperclass span").is(":visible");
@@ -52,7 +55,23 @@ var Settings = (function() {
 		function setGithubAuth(auth) {
 			$.cookie("github-auth", auth);
 		}
-
+                
+                function setModelUri(modelURI) {
+			$.cookie("modelURI", modelURI);
+		}
+                
+                function getModelUri() {
+                    return $.cookie("modelURI");
+		}
+                
+                function setOntologyType(ontologyType) {
+			$.cookie("ontologyType", ontologyType);
+		}
+                
+                function getOntologyType() {
+                    return $.cookie("ontologyType");
+		}
+                
 		function validateGithubSettings(githubUrl) {
 			var me = this;
 			var auth = this.getGithubAuth();
@@ -196,7 +215,11 @@ var Settings = (function() {
 			setGithubUsername: setGithubUsername,
 			getGithubAuth: getGithubAuth,
 			setGithubAuth: setGithubAuth,
-			validateGithubSettings: validateGithubSettings
+			validateGithubSettings: validateGithubSettings,
+                        getModelUri:getModelUri,
+                        setModelUri:setModelUri,                        
+                        getOntologyType:getOntologyType,
+                        setOntologyType:setOntologyType
 		};
 	};
 
@@ -299,6 +322,118 @@ var GithubSettingsDialog = (function() {
 				showError();
 			}
 		};
+
+		function hide() {
+			dialog.modal('hide');
+		}
+
+		function show(callbackFunction) {
+			if(callbackFunction)
+				callback = callbackFunction;
+			dialog.modal({
+				keyboard: true,
+				show: true,
+				backdrop: 'static'
+			});
+		};
+
+
+		return { //Return back the public methods
+			show: show,
+			init: init
+		};
+	};
+
+	function getInstance() {
+		if (!instance) {
+			instance = new PrivateConstructor();
+			instance.init();
+		}
+		return instance;
+	}
+
+	return {
+		getInstance: getInstance
+	};
+
+})();
+
+var ModelSettingsDialog = (function() {
+	var instance = null;
+
+	function PrivateConstructor() {
+		var dialog = $("#modelSettingsDialog");
+		var callback;
+
+		function init() {
+			//Initialize what happens when we show the dialog
+
+			//Initialize handler for Save button
+			//var me = this;
+			$('#btnSave', dialog).on('click', function(e) {
+				e.preventDefault();
+				saveDialog(e);
+			});
+
+			$('#btnCancel', dialog).on('click', function(e) {
+				e.preventDefault();
+				hide();
+			});
+
+			$('#btnDelete', dialog).on('click', function(e) {
+				e.preventDefault();
+				deleteSettings(e);
+			});
+
+			dialog.on('show.bs.modal', function(e) {
+				hideError();
+				$("#modelURI", dialog).val(Settings.getInstance().getModelUri());
+                                $("#ontologyType", dialog).prop('checked', Settings.getInstance().getOntologyType()==='true'? true: false );
+                                
+			});
+		}
+
+		function hideError() {
+			$("div.error", dialog).hide();
+		}
+
+		function showError() {
+			$("div.error", dialog).show();
+		}
+
+		function deleteSettings(e) {
+			Settings.getInstance().setModelUri(null);
+			hide();
+		}
+
+		function saveDialog(e) {
+			var modeURI = $("#modelURI", dialog); 
+                        var checkboxes = dialog.find(":checked");
+                        var ontologyType = checkboxes.length === 0? false: true; 
+                        if (modeURI[0].checkValidity()){
+                            Settings.getInstance().setModelUri(modeURI.val());      
+                            Settings.getInstance().setOntologyType(ontologyType);  
+                            changeModelSettings(modeURI.val(), ontologyType);             
+                            hide();
+                        } else {
+                            showError();
+                        }
+		};
+                
+                function changeModelSettings(modelURI, ontologyType) {
+                    var info = generateInfoObject("", "", "SetModelSettingsCommand");
+                    info["modelUri"] = modelURI;
+                    info["ontologyType"] = ontologyType;
+                    var result = true;
+                    $.ajax({
+                            url: "RequestController",
+                            type: "POST",
+                            data: info,
+                            dataType: "json",
+                            async: true
+                    });
+                    return result;
+                };
 
 		function hide() {
 			dialog.modal('hide');

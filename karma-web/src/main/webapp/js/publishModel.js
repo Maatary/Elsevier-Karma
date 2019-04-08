@@ -39,6 +39,9 @@ var PublishModelDialog = (function() {
 				window.rdfSPAQRLEndPoint = $('#txtModel_URL').html();
 				helper.getGraphURIForWorksheet('model');
 				helper.fetchGraphsFromTripleStore($('#txtModel_URL').html(), 'model', dialog);
+                                if($("#modelURI", dialog).val() == ''){
+                                    $("#modelURI", dialog).val(Settings.getInstance().getModelUri());
+                                }
 			});
 
 			//Initialize handler for Save button

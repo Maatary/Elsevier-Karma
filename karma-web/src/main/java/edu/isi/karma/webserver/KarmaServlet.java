@@ -76,7 +76,7 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class KarmaServlet extends HttpServlet {
 	private enum Arguments {
-		hasPreferenceId, workspacePreferencesId, karmaHome
+		hasPreferenceId, workspacePreferencesId, karmaHome, modelUri, ontologyType
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -89,11 +89,21 @@ public class KarmaServlet extends HttpServlet {
 		UpdateContainer updateContainer = new  UpdateContainer();
 		
 		String karmaHomeDir = request.getParameter(Arguments.karmaHome.name());
-		
+                
+                String modelURI = request.getParameter(Arguments.modelUri.name());
+                String ontologyType = request.getParameter(Arguments.ontologyType.name());
 		
 		ContextParametersRegistry contextParametersRegistry = ContextParametersRegistry.getInstance();
 		ServletContextParameterMap contextParameters = contextParametersRegistry.getContextParameters(karmaHomeDir);
 		
+                if(modelURI!=null){
+                    contextParameters.setParameterValue(ServletContextParameterMap.ContextParameter.MODEL_URI, modelURI);
+		    logger.info("MODEL_URI initilized to " + modelURI);
+                }
+                if(ontologyType!=null){
+                    contextParameters.setParameterValue(ServletContextParameterMap.ContextParameter.USE_ONTOLOGY_TYPE, ontologyType);
+		    logger.info("USE_ONTOLOGY_TYPE initilized to " + ontologyType);
+                }
 		try
 		{
 		ServerStart.initContextParameters(this.getServletContext(), contextParameters);
